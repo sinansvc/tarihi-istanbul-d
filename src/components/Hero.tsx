@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
   
   const slides = [
     {
@@ -63,13 +65,18 @@ const Hero = () => {
           </p>
           
           <div className="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center animate-fade-in">
-            <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg">
+            <Button 
+              size="lg" 
+              className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg"
+              onClick={() => navigate('/businesses')}
+            >
               Çarşıları Keşfedin
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
               className="border-white text-white hover:bg-white hover:text-amber-700 px-8 py-3 text-lg"
+              onClick={() => navigate('/auth')}
             >
               İşletmenizi Ekleyin
             </Button>

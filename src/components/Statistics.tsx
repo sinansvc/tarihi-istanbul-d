@@ -1,15 +1,44 @@
 
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const Statistics = () => {
-  const stats = [
+  const { data: stats } = useQuery({
+    queryKey: ['platform-stats'],
+    queryFn: async () => {
+      // Get business count
+      const { count: businessCount } = await supabase
+        .from('businesses')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'active');
+
+      // Get category count
+      const { count: categoryCount } = await supabase
+        .from('categories')
+        .select('*', { count: 'exact', head: true });
+
+      // Get location count
+      const { count: locationCount } = await supabase
+        .from('locations')
+        .select('*', { count: 'exact', head: true });
+
+      return {
+        businesses: businessCount || 0,
+        categories: categoryCount || 0,
+        locations: locationCount || 0,
+      };
+    },
+  });
+
+  const displayStats = [
     {
-      number: "4,500+",
+      number: `${stats?.businesses || 0}+`,
       label: "Kayıtlı İşletme",
       description: "Çarşılarımızda faaliyet gösteren işletme sayısı"
     },
     {
-      number: "25+",
+      number: `${stats?.categories || 0}+`,
       label: "Farklı Kategori",
       description: "Bijuteriden halıya, baharattan deri ürünlerine"
     },
@@ -38,7 +67,7 @@ const Statistics = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat, index) => (
+          {displayStats.map((stat, index) => (
             <div 
               key={index}
               className="text-center group hover:transform hover:scale-105 transition-all duration-300"
