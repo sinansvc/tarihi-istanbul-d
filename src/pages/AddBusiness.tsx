@@ -37,11 +37,6 @@ const AddBusiness = () => {
     cover_image_url: ''
   });
 
-  if (!user) {
-    navigate('/auth');
-    return null;
-  }
-
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
@@ -65,6 +60,12 @@ const AddBusiness = () => {
       return data;
     },
   });
+
+  // User kontrolünü hooks'lardan sonra yapıyoruz
+  if (!user) {
+    navigate('/auth');
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
