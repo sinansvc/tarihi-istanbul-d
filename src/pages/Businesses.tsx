@@ -15,8 +15,8 @@ import Footer from '@/components/Footer';
 
 const Businesses = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const [selectedLocation, setSelectedLocation] = useState<string | undefined>(undefined);
   const { user } = useAuth();
 
   const { data: categories } = useQuery({
@@ -113,7 +113,6 @@ const Businesses = () => {
                 <SelectValue placeholder="Kategori Seçin" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tüm Kategoriler</SelectItem>
                 {categories?.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.icon} {category.name_tr}
@@ -127,7 +126,6 @@ const Businesses = () => {
                 <SelectValue placeholder="Lokasyon Seçin" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tüm Lokasyonlar</SelectItem>
                 {locations?.map((location) => (
                   <SelectItem key={location.id} value={location.id}>
                     <MapPin className="w-4 h-4 mr-2" />
@@ -141,8 +139,8 @@ const Businesses = () => {
               variant="outline" 
               onClick={() => {
                 setSearchTerm('');
-                setSelectedCategory('');
-                setSelectedLocation('');
+                setSelectedCategory(undefined);
+                setSelectedLocation(undefined);
               }}
             >
               Filtreleri Temizle
@@ -257,8 +255,8 @@ const Businesses = () => {
               className="mt-4"
               onClick={() => {
                 setSearchTerm('');
-                setSelectedCategory('');
-                setSelectedLocation('');
+                setSelectedCategory(undefined);
+                setSelectedLocation(undefined);
               }}
             >
               Tüm İşletmeleri Göster
