@@ -31,7 +31,7 @@ const AddBusiness = () => {
     shop_number: '',
     phone: '',
     website: '',
-    opening_hours: '',
+    working_hours: '',
     accepts_online_orders: false,
     delivery_available: false,
     cover_image_url: ''
@@ -77,11 +77,27 @@ const AddBusiness = () => {
     setIsSubmitting(true);
 
     try {
+      // Convert working_hours to JSON format if provided
+      const workingHoursJson = formData.working_hours 
+        ? { general: formData.working_hours }
+        : null;
+
       const { error } = await supabase
         .from('businesses')
         .insert({
-          ...formData,
-          owner_id: user.id,
+          name_tr: formData.name_tr,
+          name_en: formData.name_en || null,
+          description_tr: formData.description_tr || null,
+          description_en: formData.description_en || null,
+          category_id: formData.category_id,
+          location_id: formData.location_id,
+          shop_number: formData.shop_number || null,
+          phone: formData.phone || null,
+          website: formData.website || null,
+          working_hours: workingHoursJson,
+          accepts_online_orders: formData.accepts_online_orders,
+          delivery_available: formData.delivery_available,
+          cover_image_url: formData.cover_image_url || null,
           status: 'pending'
         });
 
@@ -219,11 +235,11 @@ const AddBusiness = () => {
 
               {/* Çalışma Saatleri */}
               <div>
-                <Label htmlFor="opening_hours">Çalışma Saatleri</Label>
+                <Label htmlFor="working_hours">Çalışma Saatleri</Label>
                 <Input
-                  id="opening_hours"
-                  value={formData.opening_hours}
-                  onChange={(e) => setFormData({...formData, opening_hours: e.target.value})}
+                  id="working_hours"
+                  value={formData.working_hours}
+                  onChange={(e) => setFormData({...formData, working_hours: e.target.value})}
                   placeholder="Örn: Pazartesi-Cumartesi 09:00-18:00"
                 />
               </div>
