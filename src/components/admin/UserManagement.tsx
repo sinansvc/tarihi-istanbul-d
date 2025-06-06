@@ -21,9 +21,8 @@ const UserManagement = () => {
         .from('profiles')
         .select(`
           *,
-          user_roles (role)
-        `)
-        .order('created_at', { ascending: false });
+          user_roles!inner (role)
+        `);
       
       if (error) throw error;
       return data;
@@ -35,14 +34,14 @@ const UserManagement = () => {
     try {
       // Önce mevcut rolü sil
       await supabase
-        .from('user_roles')
+        .from('user_roles' as any)
         .delete()
         .eq('user_id', userId);
 
       // Yeni rolü ekle (eğer user değilse)
       if (newRole !== 'user') {
         const { error } = await supabase
-          .from('user_roles')
+          .from('user_roles' as any)
           .insert({ user_id: userId, role: newRole });
 
         if (error) throw error;

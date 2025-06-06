@@ -17,7 +17,7 @@ const Navbar = () => {
       if (!user) return false;
       
       const { data, error } = await supabase
-        .from('user_roles')
+        .from('user_roles' as any)
         .select('role')
         .eq('user_id', user.id)
         .eq('role', 'admin')
