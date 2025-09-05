@@ -5,12 +5,13 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Settings, BarChart3 } from 'lucide-react';
+import { Shield, Users, Settings, BarChart3, FileText } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import UserManagement from '@/components/admin/UserManagement';
 import BusinessApproval from '@/components/admin/BusinessApproval';
 import AdminStats from '@/components/admin/AdminStats';
+import AdminLogs from '@/components/admin/AdminLogs';
 import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
@@ -85,7 +86,7 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="stats" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="stats" className="flex items-center">
               <BarChart3 className="w-4 h-4 mr-2" />
               İstatistikler
@@ -97,6 +98,10 @@ const AdminPanel = () => {
             <TabsTrigger value="users" className="flex items-center">
               <Users className="w-4 h-4 mr-2" />
               Kullanıcılar
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="flex items-center">
+              <FileText className="w-4 h-4 mr-2" />
+              Loglar
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center">
               <Settings className="w-4 h-4 mr-2" />
@@ -114,6 +119,10 @@ const AdminPanel = () => {
 
           <TabsContent value="users">
             <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="logs">
+            <AdminLogs />
           </TabsContent>
 
           <TabsContent value="settings">
