@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star } from 'lucide-react';
+import { MapPin, Star, Clock, Phone, Instagram, Facebook, Globe, Image } from 'lucide-react';
 
 const FeaturedBusinesses = () => {
   const businesses = [
@@ -15,7 +15,16 @@ const FeaturedBusinesses = () => {
       location: "Kapalıçarşı - 125. Dükkân",
       rating: 4.8,
       image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=400&q=80",
+      gallery: [
+        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=400&q=80",
+        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=400&q=80"
+      ],
       isOpen: true,
+      workingHours: "Pazartesi-Cumartesi 09:00-19:00",
+      phone: "+90 212 555 0123",
+      instagram: "@altinkuyumcu",
+      facebook: "altinkuyumcu",
+      website: "https://altinkuyumcu.com",
       description: "Geleneksel el işçiliği ile modern tasarımı buluşturan bijuteri uzmanı"
     },
     {
@@ -26,7 +35,15 @@ const FeaturedBusinesses = () => {
       location: "Mısır Çarşısı - 45. Dükkân",
       rating: 4.9,
       image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80",
+      gallery: [
+        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80",
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=400&q=80"
+      ],
       isOpen: true,
+      workingHours: "Her gün 08:00-20:00",
+      phone: "+90 212 555 0456",
+      instagram: "@baharatdunyasi",
+      website: "https://baharatdunyasi.com",
       description: "150 yıllık deneyim ile en kaliteli baharatlar ve çaylar"
     },
     {
@@ -136,6 +153,48 @@ const FeaturedBusinesses = () => {
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                   {business.description}
                 </p>
+
+                {/* Çalışma Saatleri */}
+                {business.workingHours && (
+                  <div className="flex items-center text-gray-600 mb-2">
+                    <Clock className="w-4 h-4 mr-2" />
+                    <span className="text-xs">{business.workingHours}</span>
+                  </div>
+                )}
+
+                {/* İletişim ve Sosyal Medya */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex space-x-2">
+                    {business.phone && (
+                      <Button variant="ghost" size="icon" className="w-6 h-6">
+                        <Phone className="w-3 h-3" />
+                      </Button>
+                    )}
+                    {business.website && (
+                      <Button variant="ghost" size="icon" className="w-6 h-6">
+                        <Globe className="w-3 h-3" />
+                      </Button>
+                    )}
+                    {business.instagram && (
+                      <Button variant="ghost" size="icon" className="w-6 h-6">
+                        <Instagram className="w-3 h-3" />
+                      </Button>
+                    )}
+                    {business.facebook && (
+                      <Button variant="ghost" size="icon" className="w-6 h-6">
+                        <Facebook className="w-3 h-3" />
+                      </Button>
+                    )}
+                  </div>
+                  
+                  {/* Galeri göstergesi */}
+                  {business.gallery && business.gallery.length > 1 && (
+                    <div className="flex items-center text-gray-500">
+                      <Image className="w-3 h-3 mr-1" />
+                      <span className="text-xs">+{business.gallery.length - 1}</span>
+                    </div>
+                  )}
+                </div>
                 
                 <Button 
                   className="w-full bg-amber-600 hover:bg-amber-700 text-white"
