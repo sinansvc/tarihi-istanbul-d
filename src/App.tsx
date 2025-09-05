@@ -11,6 +11,7 @@ import Businesses from "./pages/Businesses";
 import Profile from "./pages/Profile";
 import AddBusiness from "./pages/AddBusiness";
 import AdminPanel from "./pages/AdminPanel";
+import BusinessDetail from "./pages/BusinessDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/businesses" element={<Businesses />} />
+            <Route path="/business/:id" element={<BusinessDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/add-business" element={<AddBusiness />} />
             <Route path="/admin" element={<AdminPanel />} />
