@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Businesses from "./pages/Businesses";
 import Profile from "./pages/Profile";
 import AddBusiness from "./pages/AddBusiness";
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/businesses" element={<Businesses />} />
             <Route path="/business/:id" element={<BusinessDetail />} />
             <Route path="/profile" element={<Profile />} />
