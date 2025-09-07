@@ -17,6 +17,7 @@ import DescriptionForm from '@/components/business/DescriptionForm';
 import WorkingHoursForm from '@/components/business/WorkingHoursForm';
 import ImageForm from '@/components/business/ImageForm';
 import BusinessFeaturesForm from '@/components/business/BusinessFeaturesForm';
+import SocialMediaForm from '@/components/business/SocialMediaForm';
 
 const AddBusiness = () => {
   const { user } = useAuth();
@@ -32,11 +33,22 @@ const AddBusiness = () => {
     location_id: '',
     shop_number: '',
     phone: '',
+    email: '',
+    whatsapp: '',
     website: '',
     working_hours: '',
+    detailed_hours: null,
     accepts_online_orders: false,
     delivery_available: false,
-    cover_image_url: ''
+    cover_image_url: '',
+    gallery_images: [],
+    social_media_enabled: false,
+    instagram: '',
+    facebook: '',
+    twitter: '',
+    linkedin: '',
+    youtube: '',
+    tiktok: ''
   });
 
   const { data: categories } = useQuery({
@@ -79,28 +91,47 @@ const AddBusiness = () => {
     setIsSubmitting(true);
 
     try {
-      const workingHoursJson = formData.working_hours 
+      // Prepare working hours data
+      const workingHoursJson = formData.detailed_hours 
+        ? { detailed: formData.detailed_hours }
+        : formData.working_hours 
         ? { general: formData.working_hours }
         : null;
 
+      // Prepare social media data
+      const socialMediaData = formData.social_media_enabled ? {
+        instagram: formData.instagram || null,
+        facebook: formData.facebook || null,
+        twitter: formData.twitter || null,
+        linkedin: formData.linkedin || null,
+        youtube: formData.youtube || null,
+        tiktok: formData.tiktok || null
+      } : null;
+
+      const businessData = {
+        name_tr: formData.name_tr,
+        name_en: formData.name_en || null,
+        description_tr: formData.description_tr || null,
+        description_en: formData.description_en || null,
+        category_id: formData.category_id,
+        location_id: formData.location_id,
+        shop_number: formData.shop_number || null,
+        phone: formData.phone || null,
+        email: formData.email || null,
+        whatsapp: formData.whatsapp || null,
+        website: formData.website || null,
+        working_hours: workingHoursJson,
+        accepts_online_orders: formData.accepts_online_orders,
+        delivery_available: formData.delivery_available,
+        cover_image_url: formData.cover_image_url || null,
+        gallery_images: formData.gallery_images?.length > 0 ? formData.gallery_images : null,
+        social_media: socialMediaData,
+        status: 'pending' as const
+      };
+
       const { error } = await supabase
         .from('businesses')
-        .insert({
-          name_tr: formData.name_tr,
-          name_en: formData.name_en || null,
-          description_tr: formData.description_tr || null,
-          description_en: formData.description_en || null,
-          category_id: formData.category_id,
-          location_id: formData.location_id,
-          shop_number: formData.shop_number || null,
-          phone: formData.phone || null,
-          website: formData.website || null,
-          working_hours: workingHoursJson,
-          accepts_online_orders: formData.accepts_online_orders,
-          delivery_available: formData.delivery_available,
-          cover_image_url: formData.cover_image_url || null,
-          status: 'pending'
-        });
+        .insert(businessData);
 
       if (error) throw error;
 
@@ -149,6 +180,8 @@ const AddBusiness = () => {
               <WorkingHoursForm formData={formData} setFormData={setFormData} />
 
               <ImageForm formData={formData} setFormData={setFormData} />
+
+              <SocialMediaForm formData={formData} setFormData={setFormData} />
 
               <BusinessFeaturesForm formData={formData} setFormData={setFormData} />
 
