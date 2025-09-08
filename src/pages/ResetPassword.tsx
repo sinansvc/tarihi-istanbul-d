@@ -16,20 +16,40 @@ const ResetPassword = () => {
 
   // Şifre sıfırlama token'ını kontrol et
   useEffect(() => {
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    
-    if (!accessToken || !refreshToken) {
-      toast.error('Geçersiz şifre sıfırlama bağlantısı');
-      navigate('/auth');
-      return;
-    }
+    const handlePasswordReset = async () => {
+      // URL'den token parametrelerini al
+      const accessToken = searchParams.get('access_token');
+      const refreshToken = searchParams.get('refresh_token');
+      const type = searchParams.get('type');
+      
+      console.log('URL parametreleri:', { accessToken, refreshToken, type });
+      
+      // Recovery link mi kontrol et
+      if (type === 'recovery' && accessToken && refreshToken) {
+        try {
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
+          
+          if (error) {
+            console.error('Session set error:', error);
+            toast.error('Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş');
+            navigate('/auth');
+          }
+        } catch (error) {
+          console.error('Token set error:', error);
+          toast.error('Bir hata oluştu');
+          navigate('/auth');
+        }
+      } else if (!accessToken && !refreshToken && !type) {
+        // URL parametresi yoksa auth sayfasına yönlendir
+        toast.error('Geçersiz şifre sıfırlama bağlantısı');
+        navigate('/auth');
+      }
+    };
 
-    // Token'ları Supabase'e set et
-    supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken
-    });
+    handlePasswordReset();
   }, [searchParams, navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
