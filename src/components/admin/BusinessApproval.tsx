@@ -50,10 +50,7 @@ const BusinessApproval = () => {
     try {
       const { error } = await supabase
         .from('businesses')
-        .update({ 
-          status,
-          approved_at: status === 'active' ? new Date().toISOString() : null 
-        })
+        .update({ status })
         .in('id', selectedBusinesses);
 
       if (error) throw error;
@@ -77,10 +74,7 @@ const BusinessApproval = () => {
     try {
       const { error } = await supabase
         .from('businesses')
-        .update({ 
-          status,
-          approved_at: status === 'active' ? new Date().toISOString() : null 
-        })
+        .update({ status })
         .eq('id', businessId);
 
       if (error) throw error;
@@ -92,6 +86,20 @@ const BusinessApproval = () => {
       console.error('Error updating business status:', error);
       toast.error('İşlem sırasında bir hata oluştu');
     }
+  };
+
+  // İşletme detaylarını görüntüle
+  const viewBusinessDetails = (business: any) => {
+    // İşletme detaylarını modal veya alert ile göster
+    alert(`İşletme Detayları:
+İsim: ${business.name_tr}
+Kategori: ${business.categories?.name_tr || 'Belirtilmemiş'}
+Konum: ${business.locations?.name_tr || 'Belirtilmemiş'}
+Durum: ${business.status === 'active' ? 'Aktif' : business.status === 'pending' ? 'Bekliyor' : 'Reddedildi'}
+Oluşturulma: ${new Date(business.created_at).toLocaleDateString('tr-TR')}
+Email: ${business.email || 'Belirtilmemiş'}
+Telefon: ${business.phone || 'Belirtilmemiş'}
+Adres: ${business.address || 'Belirtilmemiş'}`);
   };
 
   // Seçim fonksiyonları
@@ -300,6 +308,7 @@ const BusinessApproval = () => {
                           size="sm"
                           variant="outline"
                           className="h-8 w-8 p-0"
+                          onClick={() => viewBusinessDetails(business)}
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
