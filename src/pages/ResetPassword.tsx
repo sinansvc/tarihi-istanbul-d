@@ -17,32 +17,45 @@ const ResetPassword = () => {
   // Şifre sıfırlama token'ını kontrol et
   useEffect(() => {
     const handlePasswordReset = async () => {
-      // URL'den token parametrelerini al
-      const accessToken = searchParams.get('access_token');
-      const refreshToken = searchParams.get('refresh_token');
-      const type = searchParams.get('type');
+      // URL fragment'inden (#) parametreleri al
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+      const type = hashParams.get('type');
       
-      console.log('URL parametreleri:', { accessToken, refreshToken, type });
+      // URL search parametrelerinden de kontrol et
+      const searchAccessToken = searchParams.get('access_token');
+      const searchRefreshToken = searchParams.get('refresh_token');
+      const searchType = searchParams.get('type');
+      
+      console.log('Hash parametreleri:', { accessToken, refreshToken, type });
+      console.log('Search parametreleri:', { searchAccessToken, searchRefreshToken, searchType });
+      
+      const finalAccessToken = accessToken || searchAccessToken;
+      const finalRefreshToken = refreshToken || searchRefreshToken;
+      const finalType = type || searchType;
       
       // Recovery link mi kontrol et
-      if (type === 'recovery' && accessToken && refreshToken) {
+      if (finalType === 'recovery' && finalAccessToken && finalRefreshToken) {
         try {
           const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken
+            access_token: finalAccessToken,
+            refresh_token: finalRefreshToken
           });
           
           if (error) {
             console.error('Session set error:', error);
             toast.error('Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş');
             navigate('/auth');
+          } else {
+            console.log('Session başarıyla ayarlandı');
           }
         } catch (error) {
           console.error('Token set error:', error);
           toast.error('Bir hata oluştu');
           navigate('/auth');
         }
-      } else if (!accessToken && !refreshToken && !type) {
+      } else if (!finalAccessToken && !finalRefreshToken && !finalType) {
         // URL parametresi yoksa auth sayfasına yönlendir
         toast.error('Geçersiz şifre sıfırlama bağlantısı');
         navigate('/auth');
