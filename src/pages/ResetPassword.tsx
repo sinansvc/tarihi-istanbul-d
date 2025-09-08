@@ -13,14 +13,24 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
+  // Şifre sıfırlama token'ını kontrol et
   useEffect(() => {
-    // Eğer kullanıcı zaten giriş yapmışsa ana sayfaya yönlendir
-    if (user) {
-      navigate('/');
+    const accessToken = searchParams.get('access_token');
+    const refreshToken = searchParams.get('refresh_token');
+    
+    if (!accessToken || !refreshToken) {
+      toast.error('Geçersiz şifre sıfırlama bağlantısı');
+      navigate('/auth');
+      return;
     }
-  }, [user, navigate]);
+
+    // Token'ları Supabase'e set et
+    supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken
+    });
+  }, [searchParams, navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
