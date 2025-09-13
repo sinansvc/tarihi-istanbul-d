@@ -12,6 +12,7 @@ import UserManagement from '@/components/admin/UserManagement';
 import BusinessApproval from '@/components/admin/BusinessApproval';
 import AdminStats from '@/components/admin/AdminStats';
 import AdminLogs from '@/components/admin/AdminLogs';
+import { SecurityDashboard } from '@/components/admin/SecurityDashboard';
 import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
@@ -86,7 +87,7 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="stats" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="stats" className="flex items-center">
               <BarChart3 className="w-4 h-4 mr-2" />
               İstatistikler
@@ -98,6 +99,10 @@ const AdminPanel = () => {
             <TabsTrigger value="users" className="flex items-center">
               <Users className="w-4 h-4 mr-2" />
               Kullanıcılar
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center">
+              <Shield className="w-4 h-4 mr-2" />
+              Güvenlik
             </TabsTrigger>
             <TabsTrigger value="logs" className="flex items-center">
               <FileText className="w-4 h-4 mr-2" />
@@ -119,6 +124,10 @@ const AdminPanel = () => {
 
           <TabsContent value="users">
             <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="security">
+            <SecurityDashboard />
           </TabsContent>
 
           <TabsContent value="logs">
