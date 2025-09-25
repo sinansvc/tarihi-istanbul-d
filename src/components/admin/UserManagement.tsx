@@ -17,15 +17,27 @@ const UserManagement = () => {
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get all profiles with their user roles
+      const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user_roles!inner (role)
-        `);
+        .select('*');
       
-      if (error) throw error;
-      return data;
+      if (profilesError) throw profilesError;
+
+      // Then get user roles separately
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+      
+      if (rolesError) throw rolesError;
+
+      // Combine the data
+      const usersWithRoles = profiles.map(profile => ({
+        ...profile,
+        user_roles: userRoles.filter(role => role.user_id === profile.id)
+      }));
+
+      return usersWithRoles;
     },
   });
 
@@ -127,7 +139,9 @@ const UserManagement = () => {
                       {user.full_name || 'Belirtilmemiş'}
                     </TableCell>
                     <TableCell>
-                      {user.id.substring(0, 8)}...
+                      <span className="text-sm text-gray-600">
+                        {user.id.substring(0, 8)}...
+                      </span>
                     </TableCell>
                     <TableCell>
                       <Badge className={getRoleBadgeColor(currentRole)}>

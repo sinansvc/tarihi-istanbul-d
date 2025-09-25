@@ -16,6 +16,7 @@ import {
   Mail, MessageCircle, Navigation, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSecureBusinessData } from '@/hooks/useSecureBusinessData';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -27,26 +28,7 @@ const BusinessDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const { data: business, isLoading, error } = useQuery({
-    queryKey: ['business-detail', id],
-    queryFn: async () => {
-      if (!id) throw new Error('Business ID is required');
-      
-      const { data, error } = await supabase
-        .from('businesses')
-        .select(`
-          *,
-          categories(name_tr, name_en, icon, color),
-          locations(name_tr, name_en)
-        `)
-        .eq('id', id)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!id,
-  });
+  const { data: business, isLoading, error } = useSecureBusinessData(id || '');
 
   // Favorileri kontrol et
   const { data: favoriteData } = useQuery({
