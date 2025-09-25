@@ -190,6 +190,44 @@ export type Database = {
         }
         Relationships: []
       }
+      featured_businesses: {
+        Row: {
+          business_id: string
+          created_at: string
+          featured_until: string | null
+          id: string
+          is_active: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          featured_until?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          featured_until?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_businesses_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           created_at: string | null
