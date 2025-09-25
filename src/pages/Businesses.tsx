@@ -76,11 +76,11 @@ const Businesses = () => {
         query = query.or(`name_tr.ilike.%${searchTerm}%,name_en.ilike.%${searchTerm}%,description_tr.ilike.%${searchTerm}%`);
       }
 
-      if (selectedCategory) {
+      if (selectedCategory && selectedCategory !== 'all') {
         query = query.eq('category_id', selectedCategory);
       }
 
-      if (selectedLocation) {
+      if (selectedLocation && selectedLocation !== 'all') {
         query = query.eq('location_id', selectedLocation);
       }
 
@@ -209,7 +209,7 @@ const Businesses = () => {
                 <SelectValue placeholder="Kategori Seçin" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tüm Kategoriler</SelectItem>
+                <SelectItem value="all">Tüm Kategoriler</SelectItem>
                 {categories?.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.icon} {category.name_tr}
@@ -226,7 +226,7 @@ const Businesses = () => {
                 <SelectValue placeholder="Lokasyon Seçin" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tüm Lokasyonlar</SelectItem>
+                <SelectItem value="all">Tüm Lokasyonlar</SelectItem>
                 {locations?.map((location) => (
                   <SelectItem key={location.id} value={location.id}>
                     <MapPin className="w-4 h-4 mr-2" />

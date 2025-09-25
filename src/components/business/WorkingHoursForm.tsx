@@ -190,14 +190,17 @@ const WorkingHoursForm = ({ formData, setFormData }: WorkingHoursFormProps) => {
                           <Label className="text-xs">Öğle Molası</Label>
                           <div className="flex gap-1">
                             <Select
-                              value={dayHours.breakStart || ''}
-                              onValueChange={(value) => updateDayHours(key, { breakStart: value })}
+                              value={dayHours.breakStart || 'none'}
+                              onValueChange={(value) => updateDayHours(key, { 
+                                breakStart: value === 'none' ? undefined : value,
+                                breakEnd: value === 'none' ? undefined : dayHours.breakEnd
+                              })}
                             >
                               <SelectTrigger className="h-8 text-xs">
                                 <SelectValue placeholder="Başlangıç" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="">Yok</SelectItem>
+                                <SelectItem value="none">Yok</SelectItem>
                                 {TIME_OPTIONS.map(time => (
                                   <SelectItem key={time} value={time}>{time}</SelectItem>
                                 ))}
