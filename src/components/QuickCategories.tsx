@@ -83,8 +83,8 @@ const QuickCategories = () => {
               onClick={() => navigate(`/businesses?category=${category.id}`)}
             >
               <CardContent className="p-6 text-center">
-                <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${category.color} flex items-center justify-center text-2xl transform group-hover:scale-110 transition-transform duration-300`}>
-                  {category.icon}
+                <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${category.color || 'from-amber-400 to-orange-500'} flex items-center justify-center text-2xl transform group-hover:scale-110 transition-transform duration-300`}>
+                  {category.icon || '🏪'}
                 </div>
                 <h3 className="font-semibold text-gray-800 mb-2 group-hover:text-amber-600 transition-colors">
                   {category.name_tr}
