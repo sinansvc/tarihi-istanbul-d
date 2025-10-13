@@ -258,6 +258,48 @@ export type Database = {
         }
         Relationships: []
       }
+      page_contents: {
+        Row: {
+          content_en: string | null
+          content_tr: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          meta_description_en: string | null
+          meta_description_tr: string | null
+          slug: string
+          title_en: string | null
+          title_tr: string
+          updated_at: string | null
+        }
+        Insert: {
+          content_en?: string | null
+          content_tr: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          meta_description_en?: string | null
+          meta_description_tr?: string | null
+          slug: string
+          title_en?: string | null
+          title_tr: string
+          updated_at?: string | null
+        }
+        Update: {
+          content_en?: string | null
+          content_tr?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          meta_description_en?: string | null
+          meta_description_tr?: string | null
+          slug?: string
+          title_en?: string | null
+          title_tr?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           business_id: string | null
@@ -438,6 +480,33 @@ export type Database = {
           table_name?: string | null
           user_agent?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: Json
         }
         Relationships: []
       }

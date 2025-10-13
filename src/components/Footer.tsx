@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { MapPin, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const bazaars = [
@@ -89,34 +90,39 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4 text-amber-400">İletişim & Destek</h3>
             <ul className="space-y-2 text-gray-300">
               <li>
-                <a href="#" className="hover:text-amber-400 transition-colors">
+                <Link to="/page/about" className="hover:text-amber-400 transition-colors">
                   Hakkımızda
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-amber-400 transition-colors">
+                <Link to="/page/business-registration" className="hover:text-amber-400 transition-colors">
                   İşletme Kaydı
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-amber-400 transition-colors">
+                <Link to="/page/customer-service" className="hover:text-amber-400 transition-colors">
                   Müşteri Hizmetleri
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-amber-400 transition-colors">
+                <Link to="/page/help-center" className="hover:text-amber-400 transition-colors">
                   Yardım Merkezi
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-amber-400 transition-colors">
+                <Link to="/page/privacy-policy" className="hover:text-amber-400 transition-colors">
                   Gizlilik Politikası
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-amber-400 transition-colors">
+                <Link to="/page/terms-of-service" className="hover:text-amber-400 transition-colors">
                   Kullanım Koşulları
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/page/contact-support" className="hover:text-amber-400 transition-colors">
+                  İletişim
+                </Link>
               </li>
             </ul>
           </div>

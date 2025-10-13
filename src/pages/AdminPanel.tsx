@@ -14,6 +14,8 @@ import AdminStats from '@/components/admin/AdminStats';
 import AdminLogs from '@/components/admin/AdminLogs';
 import FeaturedBusinessManagement from '@/components/admin/FeaturedBusinessManagement';
 import CategoryManagement from '@/components/admin/CategoryManagement';
+import SystemSettings from '@/components/admin/SystemSettings';
+import PageContentManagement from '@/components/admin/PageContentManagement';
 import { SecurityDashboard } from '@/components/admin/SecurityDashboard';
 import { useNavigate } from 'react-router-dom';
 
@@ -89,7 +91,7 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="stats" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-9 overflow-x-auto">
             <TabsTrigger value="stats" className="flex items-center">
               <BarChart3 className="w-4 h-4 mr-2" />
               İstatistikler
@@ -117,6 +119,10 @@ const AdminPanel = () => {
             <TabsTrigger value="logs" className="flex items-center">
               <FileText className="w-4 h-4 mr-2" />
               Loglar
+            </TabsTrigger>
+            <TabsTrigger value="pages" className="flex items-center">
+              <FileText className="w-4 h-4 mr-2" />
+              Sayfalar
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center">
               <Settings className="w-4 h-4 mr-2" />
@@ -152,15 +158,12 @@ const AdminPanel = () => {
             <AdminLogs />
           </TabsContent>
 
+          <TabsContent value="pages">
+            <PageContentManagement />
+          </TabsContent>
+
           <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Sistem Ayarları</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">Sistem ayarları yakında eklenecek...</p>
-              </CardContent>
-            </Card>
+            <SystemSettings />
           </TabsContent>
         </Tabs>
       </div>
