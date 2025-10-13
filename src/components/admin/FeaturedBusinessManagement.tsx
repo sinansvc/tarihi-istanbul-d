@@ -92,7 +92,8 @@ const FeaturedBusinessManagement = () => {
   // Add featured business mutation
   const addFeaturedMutation = useMutation({
     mutationFn: async (businessId: string) => {
-      const nextOrder = Math.max(...(featuredBusinesses?.map(fb => fb.sort_order) || [0])) + 1;
+      const orders = featuredBusinesses?.map(fb => fb.sort_order) || [];
+      const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 0;
       
       const { error } = await supabase
         .from('featured_businesses')
