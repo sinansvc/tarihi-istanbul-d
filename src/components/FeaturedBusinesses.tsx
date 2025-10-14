@@ -176,6 +176,10 @@ const FeaturedBusinesses = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredBusinesses.map((featured) => {
             const business = featured.businesses;
+            
+            // Skip if business doesn't exist or is null
+            if (!business) return null;
+            
             const isOpen = isBusinessOpen(business.working_hours);
             const workingHoursText = getWorkingHoursText(business.working_hours);
             const mainImage = business.cover_image_url || business.logo_url || business.business_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?auto=format&fit=crop&w=400&q=80';
