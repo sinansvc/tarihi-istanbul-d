@@ -49,21 +49,38 @@ export const contactInfoSchema = z.object({
   instagram: z.string()
     .trim()
     .max(100, { message: "Instagram hesabı en fazla 100 karakter olabilir" })
+    .refine((val) => {
+      if (!val) return true;
+      // @ ile başlayan kullanıcı adı veya tam URL kabul edilir
+      return val.startsWith('@') || val.startsWith('http://') || val.startsWith('https://') || !val.includes(' ');
+    }, { message: "Geçerli bir Instagram hesabı giriniz (@kullaniciadi veya URL)" })
     .optional()
     .or(z.literal("")),
   facebook: z.string()
     .trim()
     .max(100, { message: "Facebook hesabı en fazla 100 karakter olabilir" })
+    .refine((val) => {
+      if (!val) return true;
+      return val.startsWith('http://') || val.startsWith('https://') || !val.includes(' ');
+    }, { message: "Geçerli bir Facebook hesabı giriniz" })
     .optional()
     .or(z.literal("")),
   twitter: z.string()
     .trim()
     .max(100, { message: "Twitter hesabı en fazla 100 karakter olabilir" })
+    .refine((val) => {
+      if (!val) return true;
+      return val.startsWith('@') || val.startsWith('http://') || val.startsWith('https://') || !val.includes(' ');
+    }, { message: "Geçerli bir Twitter hesabı giriniz (@kullaniciadi veya URL)" })
     .optional()
     .or(z.literal("")),
   linkedin: z.string()
     .trim()
     .max(100, { message: "LinkedIn hesabı en fazla 100 karakter olabilir" })
+    .refine((val) => {
+      if (!val) return true;
+      return val.startsWith('http://') || val.startsWith('https://') || !val.includes(' ');
+    }, { message: "Geçerli bir LinkedIn hesabı giriniz (URL)" })
     .optional()
     .or(z.literal(""))
 });
