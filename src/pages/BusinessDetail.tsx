@@ -347,7 +347,27 @@ const BusinessDetail = () => {
                   </CardHeader>
                   <CardContent>
                     {business.working_hours ? (
-                      <p className="text-gray-700">{String(business.working_hours)}</p>
+                      <div className="space-y-2">
+                        {typeof business.working_hours === 'object' && business.working_hours !== null ? (
+                          <>
+                            {(business.working_hours as any).general && (
+                              <p className="text-gray-700">{(business.working_hours as any).general}</p>
+                            )}
+                            {(business.working_hours as any).detailed && (
+                              <div className="space-y-2">
+                                {Object.entries((business.working_hours as any).detailed).map(([day, hours]) => (
+                                  <div key={day} className="flex justify-between">
+                                    <span className="font-medium capitalize">{day}</span>
+                                    <span className="text-gray-600">{hours as string}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <p className="text-gray-700">{String(business.working_hours)}</p>
+                        )}
+                      </div>
                     ) : (
                       <p className="text-gray-500">Çalışma saatleri belirtilmemiş</p>
                     )}
@@ -457,15 +477,83 @@ const BusinessDetail = () => {
             </Card>
 
             {/* Sosyal Medya */}
-            {business.website && (
+            {business.social_media && typeof business.social_media === 'object' && Object.values(business.social_media).some(val => val) && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Web & Sosyal Medya</CardTitle>
+                  <CardTitle>Sosyal Medya</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <p className="text-gray-500 text-sm">
-                    Sosyal medya linkleri yakında eklenecek...
-                  </p>
+                  {(business.social_media as any).instagram && (
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        const instagram = (business.social_media as any).instagram;
+                        const url = instagram.startsWith('http') 
+                          ? instagram 
+                          : instagram.startsWith('@')
+                          ? `https://instagram.com/${instagram.slice(1)}`
+                          : `https://instagram.com/${instagram}`;
+                        window.open(url, '_blank');
+                      }}
+                    >
+                      <Instagram className="w-4 h-4 mr-2 text-pink-500" />
+                      Instagram
+                    </Button>
+                  )}
+
+                  {(business.social_media as any).facebook && (
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        const facebook = (business.social_media as any).facebook;
+                        const url = facebook.startsWith('http') 
+                          ? facebook 
+                          : `https://facebook.com/${facebook}`;
+                        window.open(url, '_blank');
+                      }}
+                    >
+                      <Facebook className="w-4 h-4 mr-2 text-blue-600" />
+                      Facebook
+                    </Button>
+                  )}
+
+                  {(business.social_media as any).twitter && (
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        const twitter = (business.social_media as any).twitter;
+                        const url = twitter.startsWith('http') 
+                          ? twitter 
+                          : twitter.startsWith('@')
+                          ? `https://twitter.com/${twitter.slice(1)}`
+                          : `https://twitter.com/${twitter}`;
+                        window.open(url, '_blank');
+                      }}
+                    >
+                      <Twitter className="w-4 h-4 mr-2 text-blue-400" />
+                      Twitter/X
+                    </Button>
+                  )}
+
+                  {(business.social_media as any).linkedin && (
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        const linkedin = (business.social_media as any).linkedin;
+                        const url = linkedin.startsWith('http') 
+                          ? linkedin 
+                          : `https://linkedin.com/company/${linkedin}`;
+                        window.open(url, '_blank');
+                      }}
+                    >
+                      <Linkedin className="w-4 h-4 mr-2 text-blue-700" />
+                      LinkedIn
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             )}
