@@ -26,15 +26,32 @@ const ContactInfoForm = ({ formData, setFormData }: ContactInfoFormProps) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateField = (field: string, value: string) => {
-    const validation = validateInput(contactInfoSchema, { ...formData, [field]: value });
-    if (!validation.success && validation.errors) {
-      setErrors(prev => ({ ...prev, [field]: validation.errors![field] || '' }));
-    } else {
+    // Boş değerler için hata gösterme (optional field'lar için)
+    if (!value || value.trim() === '') {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[field];
         return newErrors;
       });
+      return;
+    }
+
+    // Sadece ilgili field için schema oluştur ve validate et
+    try {
+      const fieldSchema = contactInfoSchema.pick({ [field]: true } as any);
+      fieldSchema.parse({ [field]: value });
+      
+      // Hata yoksa, bu field için hata mesajını kaldır
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    } catch (error: any) {
+      // Hata varsa, bu field için hata mesajını ekle
+      if (error.errors && error.errors[0]) {
+        setErrors(prev => ({ ...prev, [field]: error.errors[0].message }));
+      }
     }
   };
 
