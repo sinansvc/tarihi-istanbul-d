@@ -124,16 +124,35 @@ const AddBusiness = () => {
         accepts_online_orders: formData.accepts_online_orders,
         delivery_available: formData.delivery_available,
         cover_image_url: formData.cover_image_url || null,
-        gallery_images: formData.gallery_images?.length > 0 ? formData.gallery_images : null,
         social_media: socialMediaData,
         status: 'pending' as const
       };
 
-      const { error } = await supabase
+      const { data: newBusiness, error: businessError } = await supabase
         .from('businesses')
-        .insert(businessData);
+        .insert(businessData)
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (businessError) throw businessError;
+
+      // Insert gallery images if any
+      if (formData.gallery_images && formData.gallery_images.length > 0 && newBusiness) {
+        const imageInserts = formData.gallery_images.map((imageUrl, index) => ({
+          business_id: newBusiness.id,
+          image_url: imageUrl,
+          sort_order: index
+        }));
+
+        const { error: imagesError } = await supabase
+          .from('business_images')
+          .insert(imageInserts);
+
+        if (imagesError) {
+          console.error('Error adding gallery images:', imagesError);
+          // Don't throw - business was created successfully
+        }
+      }
 
       toast.success('İşletme başarıyla eklendi! Onay bekliyor.');
       navigate('/profile');
