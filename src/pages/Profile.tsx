@@ -18,13 +18,41 @@ const Profile = () => {
   const { data: userProfile } = useQuery({
     queryKey: ['user-profile', user?.id],
     queryFn: async () => {
+      if (!user?.id) return null;
       const { data, error } = await supabase
         .from('profiles')
         .select('business_id')
-        .eq('id', user?.id)
-        .single();
+        .eq('id', user.id)
+        .maybeSingle();
       if (error) throw error;
       return data;
+    },
+    enabled: !!user,
+  });
+
+  // Kullanıcı istatistiklerini getir
+  const { data: stats } = useQuery({
+    queryKey: ['user-stats', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return { favorites: 0, businesses: 0, views: 0 };
+      
+      // Favoriler
+      const { count: favCount } = await supabase
+        .from('user_favorites')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+      
+      // Eklenen işletmeler
+      const { count: bizCount } = await supabase
+        .from('businesses')
+        .select('*', { count: 'exact', head: true })
+        .eq('id', userProfile?.business_id || '');
+      
+      return {
+        favorites: favCount || 0,
+        businesses: bizCount || 0,
+        views: 0 // Görüntülenme sayısı için ayrı bir tablo oluşturulabilir
+      };
     },
     enabled: !!user,
   });
@@ -140,15 +168,15 @@ const Profile = () => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4 bg-amber-50 rounded-lg">
-                <div className="text-2xl font-bold text-amber-600">0</div>
+                <div className="text-2xl font-bold text-amber-600">{stats?.favorites || 0}</div>
                 <div className="text-sm text-gray-600">Favori İşletme</div>
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600">0</div>
+                <div className="text-2xl font-bold text-orange-600">{stats?.businesses || 0}</div>
                 <div className="text-sm text-gray-600">Eklenen İşletme</div>
               </div>
               <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                <div className="text-2xl font-bold text-yellow-600">0</div>
+                <div className="text-2xl font-bold text-yellow-600">{stats?.views || 0}</div>
                 <div className="text-sm text-gray-600">Görüntülenme</div>
               </div>
             </div>
