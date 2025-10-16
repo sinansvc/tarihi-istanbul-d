@@ -11,6 +11,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Businesses from "./pages/Businesses";
 import Profile from "./pages/Profile";
 import AddBusiness from "./pages/AddBusiness";
+import EditBusiness from "./pages/EditBusiness";
 import AdminPanel from "./pages/AdminPanel";
 import BusinessDetail from "./pages/BusinessDetail";
 import ContentPage from "./pages/ContentPage";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/business/:id" element={<BusinessDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/add-business" element={<AddBusiness />} />
+            <Route path="/edit-business" element={<EditBusiness />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/page/:slug" element={<ContentPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

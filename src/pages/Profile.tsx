@@ -2,15 +2,32 @@
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Calendar, Heart, Store } from 'lucide-react';
+import { User, Mail, Calendar, Heart, Store, Edit } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 const Profile = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Kullanıcının işletmesini kontrol et
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('business_id')
+        .eq('id', user?.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
   if (!user) {
     navigate('/auth');
@@ -77,13 +94,23 @@ const Profile = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button 
-                className="w-full bg-amber-600 hover:bg-amber-700"
-                onClick={() => navigate('/add-business')}
-              >
-                <Store className="w-4 h-4 mr-2" />
-                İşletme Ekle
-              </Button>
+              {userProfile?.business_id ? (
+                <Button 
+                  className="w-full bg-amber-600 hover:bg-amber-700"
+                  onClick={() => navigate('/edit-business')}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  İşletmemi Düzenle
+                </Button>
+              ) : (
+                <Button 
+                  className="w-full bg-amber-600 hover:bg-amber-700"
+                  onClick={() => navigate('/add-business')}
+                >
+                  <Store className="w-4 h-4 mr-2" />
+                  İşletme Ekle
+                </Button>
+              )}
               
               <Button 
                 variant="outline" 
