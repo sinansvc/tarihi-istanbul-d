@@ -69,6 +69,7 @@ export type Database = {
           min_order_amount: number | null
           name_en: string | null
           name_tr: string
+          owner_id: string | null
           owner_name: string | null
           payment_methods:
             | Database["public"]["Enums"]["payment_method"][]
@@ -101,6 +102,7 @@ export type Database = {
           min_order_amount?: number | null
           name_en?: string | null
           name_tr: string
+          owner_id?: string | null
           owner_name?: string | null
           payment_methods?:
             | Database["public"]["Enums"]["payment_method"][]
@@ -133,6 +135,7 @@ export type Database = {
           min_order_amount?: number | null
           name_en?: string | null
           name_tr?: string
+          owner_id?: string | null
           owner_name?: string | null
           payment_methods?:
             | Database["public"]["Enums"]["payment_method"][]
