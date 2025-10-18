@@ -130,23 +130,14 @@ const AddBusiness = () => {
 
       const { data: newBusiness, error: businessError } = await supabase
         .from('businesses')
-        .insert(businessData)
+        .insert({
+          ...businessData,
+          owner_id: user.id
+        })
         .select()
         .single();
 
       if (businessError) throw businessError;
-
-      // Update user profile with business_id
-      if (newBusiness) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ business_id: newBusiness.id })
-          .eq('id', user.id);
-
-        if (profileError) {
-          console.error('Error updating profile:', profileError);
-        }
-      }
 
       // Insert gallery images if any
       if (formData.gallery_images && formData.gallery_images.length > 0 && newBusiness) {

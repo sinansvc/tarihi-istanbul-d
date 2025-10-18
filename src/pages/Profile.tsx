@@ -14,18 +14,18 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  // Kullanıcının işletmesini kontrol et
-  const { data: userProfile } = useQuery({
-    queryKey: ['user-profile', user?.id],
+  // Kullanıcının tüm işletmelerini getir
+  const { data: userBusinesses } = useQuery({
+    queryKey: ['user-businesses', user?.id],
     queryFn: async () => {
-      if (!user?.id) return null;
+      if (!user?.id) return [];
       const { data, error } = await supabase
-        .from('profiles')
-        .select('business_id')
-        .eq('id', user.id)
-        .maybeSingle();
+        .from('businesses')
+        .select('id, name_tr, status')
+        .eq('owner_id', user.id)
+        .order('created_at', { ascending: false });
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!user,
   });
@@ -46,7 +46,7 @@ const Profile = () => {
       const { count: bizCount } = await supabase
         .from('businesses')
         .select('*', { count: 'exact', head: true })
-        .eq('id', userProfile?.business_id || '');
+        .eq('owner_id', user.id);
       
       return {
         favorites: favCount || 0,
@@ -122,22 +122,29 @@ const Profile = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {userProfile?.business_id ? (
-                <Button 
-                  className="w-full bg-amber-600 hover:bg-amber-700"
-                  onClick={() => navigate('/edit-business')}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  İşletmemi Düzenle
-                </Button>
-              ) : (
-                <Button 
-                  className="w-full bg-amber-600 hover:bg-amber-700"
-                  onClick={() => navigate('/add-business')}
-                >
-                  <Store className="w-4 h-4 mr-2" />
-                  İşletme Ekle
-                </Button>
+              <Button 
+                className="w-full bg-amber-600 hover:bg-amber-700"
+                onClick={() => navigate('/add-business')}
+              >
+                <Store className="w-4 h-4 mr-2" />
+                Yeni İşletme Ekle
+              </Button>
+              
+              {userBusinesses && userBusinesses.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-gray-700">İşletmelerim:</p>
+                  {userBusinesses.map((business) => (
+                    <Button 
+                      key={business.id}
+                      variant="outline"
+                      className="w-full justify-between"
+                      onClick={() => navigate(`/edit-business/${business.id}`)}
+                    >
+                      <span>{business.name_tr}</span>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                  ))}
+                </div>
               )}
               
               <Button 

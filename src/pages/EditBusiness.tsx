@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +21,7 @@ import SocialMediaForm from '@/components/business/SocialMediaForm';
 const EditBusiness = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { id: businessId } = useParams();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -51,26 +52,11 @@ const EditBusiness = () => {
     tiktok: ''
   });
 
-  // Kullanıcının işletmesini getir
-  const { data: userProfile, isLoading: profileLoading } = useQuery({
-    queryKey: ['user-profile', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('business_id')
-        .eq('id', user?.id)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
-
   // İşletme verilerini getir
   const { data: business, isLoading: businessLoading } = useQuery({
-    queryKey: ['business', userProfile?.business_id],
+    queryKey: ['business', businessId],
     queryFn: async () => {
-      if (!userProfile?.business_id) return null;
+      if (!businessId) return null;
       
       const { data, error } = await supabase
         .from('businesses')
@@ -78,13 +64,14 @@ const EditBusiness = () => {
           *,
           business_images(*)
         `)
-        .eq('id', userProfile.business_id)
+        .eq('id', businessId)
+        .eq('owner_id', user?.id)
         .single();
       
       if (error) throw error;
       return data;
     },
-    enabled: !!userProfile?.business_id,
+    enabled: !!businessId && !!user,
   });
 
   const { data: categories } = useQuery({
@@ -151,7 +138,7 @@ const EditBusiness = () => {
     return null;
   }
 
-  if (profileLoading || businessLoading) {
+  if (businessLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
@@ -159,19 +146,19 @@ const EditBusiness = () => {
     );
   }
 
-  if (!userProfile?.business_id) {
+  if (!businessId || !business) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Card>
             <CardContent className="pt-6">
-              <p className="text-center text-gray-600 mb-4">Henüz bir işletmeniz bulunmamaktadır.</p>
+              <p className="text-center text-gray-600 mb-4">İşletme bulunamadı veya bu işletmeyi düzenleme yetkiniz yok.</p>
               <Button 
                 className="w-full bg-amber-600 hover:bg-amber-700"
-                onClick={() => navigate('/add-business')}
+                onClick={() => navigate('/profile')}
               >
-                İşletme Ekle
+                Profile Dön
               </Button>
             </CardContent>
           </Card>
@@ -231,7 +218,7 @@ const EditBusiness = () => {
       const { error: businessError } = await supabase
         .from('businesses')
         .update(businessData)
-        .eq('id', userProfile.business_id);
+        .eq('id', businessId);
 
       if (businessError) throw businessError;
 
@@ -239,12 +226,12 @@ const EditBusiness = () => {
       await supabase
         .from('business_images')
         .delete()
-        .eq('business_id', userProfile.business_id);
+        .eq('business_id', businessId);
 
       // Insert new gallery images if any
       if (formData.gallery_images && formData.gallery_images.length > 0) {
         const imageInserts = formData.gallery_images.map((imageUrl, index) => ({
-          business_id: userProfile.business_id,
+          business_id: businessId,
           image_url: imageUrl,
           sort_order: index
         }));
@@ -258,7 +245,8 @@ const EditBusiness = () => {
         }
       }
 
-      queryClient.invalidateQueries({ queryKey: ['business', userProfile.business_id] });
+      queryClient.invalidateQueries({ queryKey: ['business', businessId] });
+      queryClient.invalidateQueries({ queryKey: ['user-businesses', user?.id] });
       toast.success('İşletme bilgileri başarıyla güncellendi!');
     } catch (error) {
       console.error('Error updating business:', error);
