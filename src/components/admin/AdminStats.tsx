@@ -3,7 +3,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Store, Clock, CheckCircle, TrendingUp, Calendar, Eye, UserPlus } from 'lucide-react';
+import { Users, Store, Clock, CheckCircle, TrendingUp, Calendar, Eye, UserPlus, MessageSquare } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 const AdminStats = () => {
@@ -44,21 +44,35 @@ const AdminStats = () => {
         };
       });
 
-      // Kategori istatistikleri için örnek veri (gerçek Supabase şemasına göre ayarlanmalı)
-      const categoryStats = [
-        { name: 'Restoran', value: Math.floor(Math.random() * 50) + 10, color: '#8884d8' },
-        { name: 'Kafe', value: Math.floor(Math.random() * 30) + 5, color: '#82ca9d' },
-        { name: 'Market', value: Math.floor(Math.random() * 25) + 8, color: '#ffc658' },
-        { name: 'Eczane', value: Math.floor(Math.random() * 15) + 3, color: '#ff7c7c' },
-        { name: 'Kuaför', value: Math.floor(Math.random() * 20) + 5, color: '#8dd1e1' },
-        { name: 'Diğer', value: Math.floor(Math.random() * 35) + 10, color: '#d084d0' }
-      ];
+      // Kategori dağılımı - gerçek verilerden al
+      const categoriesResult = await supabase
+        .from('businesses')
+        .select('category_id, categories(name_tr)')
+        .eq('status', 'active');
+
+      const categoryCount: Record<string, number> = {};
+      categoriesResult.data?.forEach((business: any) => {
+        const categoryName = business.categories?.name_tr || 'Diğer';
+        categoryCount[categoryName] = (categoryCount[categoryName] || 0) + 1;
+      });
+
+      const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', '#d084d0', '#a4de6c', '#ffa07a'];
+      const categoryStats = Object.entries(categoryCount).map(([name, value], index) => ({
+        name,
+        value,
+        color: colors[index % colors.length]
+      }));
+
+      // Yorum ve görüntülenme istatistikleri
+      const reviewsResult = await supabase.from('reviews').select('id', { count: 'exact' });
+      const totalReviews = reviewsResult.count || 0;
 
       return {
         totalUsers: usersResult.count || 0,
         totalBusinesses: businessesResult.count || 0,
         pendingBusinesses: pendingResult.count || 0,
         activeBusinesses: activeResult.count || 0,
+        totalReviews,
         dailyUserStats,
         dailyBusinessStats,
         categoryStats,
@@ -91,6 +105,15 @@ const AdminStats = () => {
       bgColor: 'bg-green-50',
       growth: stats?.businessGrowth || 0,
       description: 'Kayıtlı işletmeler'
+    },
+    {
+      title: 'Toplam Yorum',
+      value: stats?.totalReviews || 0,
+      icon: MessageSquare,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      growth: 0,
+      description: 'Müşteri yorumları'
     },
     {
       title: 'Onay Bekleyen',
@@ -134,7 +157,7 @@ const AdminStats = () => {
   return (
     <div className="space-y-6">
       {/* Ana İstatistik Kartları */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {statCards.map((stat, index) => {
           const IconComponent = stat.icon;
           return (

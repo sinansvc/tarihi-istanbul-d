@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Settings, BarChart3, FileText, Star, Tag, MapPin } from 'lucide-react';
+import { Shield, Users, Settings, BarChart3, FileText, Star, Tag, MapPin, MessageSquare, Newspaper } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import UserManagement from '@/components/admin/UserManagement';
@@ -17,6 +17,8 @@ import CategoryManagement from '@/components/admin/CategoryManagement';
 import LocationManagement from '@/components/admin/LocationManagement';
 import SystemSettings from '@/components/admin/SystemSettings';
 import PageContentManagement from '@/components/admin/PageContentManagement';
+import ReviewManagement from '@/components/admin/ReviewManagement';
+import BlogManagement from '@/components/admin/BlogManagement';
 import { SecurityDashboard } from '@/components/admin/SecurityDashboard';
 import { useNavigate } from 'react-router-dom';
 
@@ -92,7 +94,7 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="stats" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-10 overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-12 overflow-x-auto">
             <TabsTrigger value="stats" className="flex items-center">
               <BarChart3 className="w-4 h-4 mr-2" />
               İstatistikler
@@ -116,6 +118,14 @@ const AdminPanel = () => {
             <TabsTrigger value="users" className="flex items-center">
               <Users className="w-4 h-4 mr-2" />
               Kullanıcılar
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="flex items-center">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Yorumlar
+            </TabsTrigger>
+            <TabsTrigger value="blog" className="flex items-center">
+              <Newspaper className="w-4 h-4 mr-2" />
+              Blog/SEO
             </TabsTrigger>
             <TabsTrigger value="security" className="flex items-center">
               <Shield className="w-4 h-4 mr-2" />
@@ -157,6 +167,14 @@ const AdminPanel = () => {
 
           <TabsContent value="users">
             <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="reviews">
+            <ReviewManagement />
+          </TabsContent>
+
+          <TabsContent value="blog">
+            <BlogManagement />
           </TabsContent>
 
           <TabsContent value="security">
