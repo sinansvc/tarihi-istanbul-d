@@ -8,13 +8,16 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, XCircle, Eye, Store, CheckCircle2, Filter, MoreHorizontal } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
+import { CheckCircle, XCircle, Eye, Store, CheckCircle2, Filter, Edit, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const BusinessApproval = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'active' | 'inactive'>('pending');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'active' | 'inactive'>('all');
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { data: businesses, isLoading } = useQuery({
@@ -88,6 +91,26 @@ const BusinessApproval = () => {
     }
   };
 
+  // Görünürlük toggle
+  const toggleVisibility = async (businessId: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+    try {
+      const { error } = await supabase
+        .from('businesses')
+        .update({ status: newStatus })
+        .eq('id', businessId);
+
+      if (error) throw error;
+
+      toast.success(newStatus === 'active' ? 'İşletme görünür yapıldı!' : 'İşletme gizlendi!');
+      queryClient.invalidateQueries({ queryKey: ['businesses-for-approval'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+    } catch (error) {
+      console.error('Error toggling visibility:', error);
+      toast.error('İşlem sırasında bir hata oluştu');
+    }
+  };
+
   // İşletme detaylarını görüntüle
   const viewBusinessDetails = (business: any) => {
     // İşletme detaylarını modal veya alert ile göster
@@ -143,10 +166,10 @@ Adres: ${business.address || 'Belirtilmemiş'}`);
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center">
-              <Store className="w-5 h-5 mr-2" />
-              İşletme Yönetimi
-            </CardTitle>
+          <CardTitle className="flex items-center">
+            <Store className="w-5 h-5 mr-2" />
+            Kayıtlı İşletmeler
+          </CardTitle>
             <div className="flex items-center space-x-3">
               <Select value={filterStatus} onValueChange={(value: any) => setFilterStatus(value)}>
                 <SelectTrigger className="w-40">
@@ -235,8 +258,8 @@ Adres: ${business.address || 'Belirtilmemiş'}`);
                   <TableHead>İşletme Bilgileri</TableHead>
                   <TableHead>Kategori</TableHead>
                   <TableHead>Konum</TableHead>
-                  <TableHead>Sahip</TableHead>
                   <TableHead>Durum</TableHead>
+                  <TableHead>Görünürlük</TableHead>
                   <TableHead>Tarih</TableHead>
                   <TableHead>İşlemler</TableHead>
                 </TableRow>
@@ -265,9 +288,6 @@ Adres: ${business.address || 'Belirtilmemiş'}`);
                       {business.locations?.name_tr || 'Belirtilmemiş'}
                     </TableCell>
                     <TableCell>
-                      {'Bilinmiyor'}
-                    </TableCell>
-                    <TableCell>
                       <Badge 
                         variant={
                           business.status === 'active' ? 'default' : 
@@ -277,8 +297,22 @@ Adres: ${business.address || 'Belirtilmemiş'}`);
                       >
                         {business.status === 'active' ? 'Aktif' : 
                          business.status === 'pending' ? 'Bekliyor' : 
-                         'Reddedildi'}
+                         'Pasif'}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={business.status === 'active'}
+                          onCheckedChange={() => toggleVisibility(business.id, business.status)}
+                          disabled={business.status === 'pending'}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          {business.status === 'active' ? 'Görünür' : 
+                           business.status === 'pending' ? 'Onay bekliyor' : 
+                           'Gizli'}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell>
                       {new Date(business.created_at).toLocaleDateString('tr-TR')}
@@ -290,27 +324,39 @@ Adres: ${business.address || 'Belirtilmemiş'}`);
                             <Button
                               size="sm"
                               onClick={() => updateBusinessStatus(business.id, 'active')}
-                              className="bg-green-600 hover:bg-green-700 h-8 w-8 p-0"
+                              className="bg-green-600 hover:bg-green-700 h-8"
+                              title="Onayla"
                             >
-                              <CheckCircle className="w-4 h-4" />
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                              Onayla
                             </Button>
                             <Button
                               size="sm"
                               variant="destructive"
                               onClick={() => updateBusinessStatus(business.id, 'inactive')}
-                              className="h-8 w-8 p-0"
+                              className="h-8"
+                              title="Reddet"
                             >
-                              <XCircle className="w-4 h-4" />
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Reddet
                             </Button>
                           </>
                         )}
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-8 w-8 p-0"
-                          onClick={() => viewBusinessDetails(business)}
+                          onClick={() => navigate(`/business/${business.id}`)}
+                          title="Görüntüle"
                         >
                           <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/edit-business/${business.id}`)}
+                          title="Düzenle"
+                        >
+                          <Edit className="w-4 h-4" />
                         </Button>
                       </div>
                     </TableCell>

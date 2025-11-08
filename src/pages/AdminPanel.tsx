@@ -99,7 +99,7 @@ const AdminPanel = () => {
             </TabsTrigger>
             <TabsTrigger value="businesses" className="flex items-center">
               <Settings className="w-4 h-4 mr-2" />
-              İşletme Onayları
+              Kayıtlı İşletmeler
             </TabsTrigger>
             <TabsTrigger value="featured" className="flex items-center">
               <Star className="w-4 h-4 mr-2" />
